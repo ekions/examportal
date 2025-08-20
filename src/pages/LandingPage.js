@@ -131,34 +131,41 @@ const LandingPage = () => {
               </p>
 
               <div className="space-y-4">
-                {/* ID */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    User ID
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter your ID"
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+  {/* ID */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">
+      User ID
+    </label>
+    <input
+      type="text"
+      placeholder="Enter your ID"
+      className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+      value={adminUsername}
+      onChange={(e) => setAdminUsername(e.target.value)}
+    />
+  </div>
 
-                {/* Password */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Enter your password"
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+  {/* Password */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">
+      Password
+    </label>
+    <input
+      type="password"
+      placeholder="Enter your password"
+      className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+      value={adminPassword}
+      onChange={(e) => setAdminPassword(e.target.value)}
+    />
+  </div>
 
-                <button className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700">
-                  Access Admin Portal
-                </button>
-              </div>
+  <button
+    onClick={handleAdminLogin}
+    className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
+  >
+    Access Admin Portal
+  </button>
+</div>
             </>
           )}
         </div>
