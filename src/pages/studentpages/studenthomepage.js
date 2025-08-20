@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 
-// Sidebar navigation items
+// Sidebar navigation items (removed Notifications and Practice)
 const SIDEBAR_LINKS = [
   { icon: "🏠", label: "Home", target: "home" },
   { icon: "📝", label: "Exams", target: "exams" },
-  { icon: "🎯", label: "Practice", target: "practice" },
-  { icon: "🗓️", label: "Calendar", target: "calendar" },
-  { icon: "🔔", label: "Notifications", target: "notifications" },
+  { icon: "🗓️", label: "Calendar", target: "calendar" }
 ];
 
 const Sidebar = ({ visible, onClose, current, setCurrent }) => (
@@ -51,40 +49,6 @@ const SidebarLink = ({ icon, label, active = false, onClick }) => (
     <span className="text-lg">{icon}</span>
     {label}
   </button>
-);
-
-const NotificationMenu = () => {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="relative">
-      <button
-        className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full text-gray-700 font-medium"
-        onClick={() => setOpen((prev) => !prev)}
-        aria-label="Notification options"
-      >
-        <span className="text-xl">🔔</span>
-        <span className="hidden md:inline">Notifications</span>
-      </button>
-      {open && (
-        <div className="absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-lg z-10">
-          <Notification />
-        </div>
-      )}
-    </div>
-  );
-};
-
-const Notification = () => (
-  <div className="p-4">
-    <div className="font-medium text-sm mb-2">Reminder: Exam Registration</div>
-    <div className="text-xs text-blue-700 underline mb-2">
-      Exam registration deadline approaching
-    </div>
-    <div className="font-medium text-sm mb-2">New Exam Added</div>
-    <div className="text-xs text-blue-700 underline">
-      Check your calendar for updates
-    </div>
-  </div>
 );
 
 const ProfileMenu = () => {
@@ -149,10 +113,10 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top bar with centered welcome and responsive icons */}
+      {/* Top bar with left-aligned welcome and responsive icons */}
       <div className="flex flex-col md:flex-row items-center justify-between p-4 md:p-6 bg-white shadow-sm">
-        <div className="flex-1 flex justify-center">
-          <h1 className="text-2xl font-semibold text-center">Welcome back, Emily</h1>
+        <div className="flex-1 flex justify-start">
+          <h1 className="text-2xl font-semibold text-left">Welcome back, Emily</h1>
         </div>
         <div className="flex gap-3 md:gap-6 items-center mt-4 md:mt-0">
           <button
@@ -163,7 +127,6 @@ const Dashboard = () => {
             <span className="text-xl">☰</span>
           </button>
           <ProfileMenu />
-          <NotificationMenu />
         </div>
       </div>
 
@@ -233,19 +196,6 @@ const Dashboard = () => {
                 diff="+10%"
                 diffColor="text-green-600"
               />
-            </div>
-          </section>
-
-          {/* Quick Links */}
-          <section className="mb-10" id="practice">
-            <h3 className="font-semibold mb-2">Quick Links</h3>
-            <div className="flex flex-col md:flex-row gap-3 mb-4">
-              <button className="bg-blue-600 text-white px-5 py-2 rounded-md font-medium">
-                Practice Resources
-              </button>
-              <button className="bg-gray-100 px-5 py-2 rounded-md font-medium text-gray-700">
-                Exam Registration
-              </button>
             </div>
           </section>
 
