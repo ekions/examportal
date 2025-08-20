@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Add this import
 
 // Sidebar navigation items (removed Notifications and Practice)
 const SIDEBAR_LINKS = [
@@ -110,6 +111,7 @@ const TestDate = ({ label, date }) => (
 const Dashboard = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [currentSection, setCurrentSection] = useState("home");
+  const navigate = useNavigate(); // Add this line
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -173,7 +175,10 @@ const Dashboard = () => {
                 <div className="text-sm text-gray-400">
                   View your upcoming exams and registration deadlines.
                 </div>
-                <button className="bg-gray-200 rounded-lg px-4 py-2 mt-3 text-gray-700 font-medium flex items-center gap-2">
+                <button
+                  className="bg-gray-200 rounded-lg px-4 py-2 mt-3 text-gray-700 font-medium flex items-center gap-2"
+                  onClick={() => navigate("/student/exams")} // Connect to studentviewexam.js
+                >
                   View Exams <span>&rarr;</span>
                 </button>
               </div>
