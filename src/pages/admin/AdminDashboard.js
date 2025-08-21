@@ -1,8 +1,27 @@
-// src/pages/admin/AdminDashboard.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaUserShield, FaBookOpen, FaGraduationCap } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    // Get username from localStorage (saved during login)
+    const savedUsername = localStorage.getItem("username");
+    if (!savedUsername) {
+      navigate("/"); // If no username, redirect to landing
+    } else {
+      setUsername(savedUsername);
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username"); // remove username as well
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -12,7 +31,10 @@ const AdminDashboard = () => {
             <FaUserShield className="text-blue-600 text-2xl" />
             <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
           </div>
-          <button className="py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700">
+          <button
+            className="py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700"
+            onClick={handleLogout}
+          >
             Logout
           </button>
         </div>
@@ -21,7 +43,7 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-8">
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-          Welcome, Admin!
+          Welcome, {username}!
         </h2>
 
         {/* Quick Action Cards */}
