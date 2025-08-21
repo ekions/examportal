@@ -35,6 +35,7 @@ const LandingPage = () => {
       );
       if (res.data?.token) {
         localStorage.setItem("token", res.data.token);
+        localStorage.setItem("username", res.data.username);
         navigate("/admin/dashboard");
       } else {
         setError("Invalid response from server");
