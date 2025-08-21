@@ -10,32 +10,40 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const LandingPage = () => {
-  const [activeTab, setActiveTab] = useState("student");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+const [username, setUsername] = useState("");
+const [password, setPassword] = useState("");
+const [error, setError] = useState("");
+const [loading, setLoading] = useState(false); // ✅ new state
+const navigate = useNavigate();
+
 
   // Handle Admin Login
-  const handleAdminLogin = async () => {
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/admin/login`,
-        { username, password }
-      );
+const handleAdminLogin = async () => {
+  setLoading(true);
+  setError("");
 
-      if (res.data?.token) {
-        localStorage.setItem("token", res.data.token);
-        navigate("/admin/dashboard");
-      } else {
-        setError("Invalid response from server");
-      }
-    } catch (err) {
-      setError(
-        err.response?.data?.msg || err.message || "Login failed. Please try again."
-      );
+  try {
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_URL}/api/admin/login`,
+      { username, password }
+    );
+
+    if (res.data?.token) {
+      // ✅ Save token
+      localStorage.setItem("token", res.data.token);
+      navigate("/admin/dashboard");
+    } else {
+      setError("Invalid response from server");
     }
-  };
+  } catch (err) {
+    setError(
+      err.response?.data?.msg || err.message || "Login failed. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Student Portal Component
   const StudentPortal = () => (
@@ -80,53 +88,58 @@ const LandingPage = () => {
   );
 
   // Admin Portal Component
-  const AdminPortal = () => (
-    <>
-      <h3 className="flex items-center text-lg font-semibold mb-4">
-        <FaUserShield className="text-blue-600 mr-2" /> Admin / Teacher Portal
-      </h3>
-      <p className="text-sm text-gray-600 mb-4">
-        Enter your credentials to manage exams and students
-      </p>
+const AdminPortal = () => (
+  <>
+    <h3 className="flex items-center text-lg font-semibold mb-4">
+      <FaUserShield className="text-blue-600 mr-2" /> Admin / Teacher Portal
+    </h3>
+    <p className="text-sm text-gray-600 mb-4">
+      Enter your credentials to manage exams and students
+    </p>
 
-      {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+    {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Username
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-
-        <button
-          className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
-          onClick={handleAdminLogin}
-        >
-          Access Admin Portal
-        </button>
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Username
+        </label>
+        <input
+          type="text"
+          placeholder="Enter your username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        />
       </div>
-    </>
-  );
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Password
+        </label>
+        <input
+          type="password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+
+      <button
+        disabled={loading}
+        className={`w-full py-2 font-medium rounded-md text-white ${
+          loading
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-600 hover:bg-blue-700"
+        }`}
+        onClick={handleAdminLogin}
+      >
+        {loading ? "Logging in..." : "Access Admin Portal"}
+      </button>
+    </div>
+  </>
+);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
