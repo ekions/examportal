@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// src/pages/LandingPage.js
+import React, { useState, useEffect } from "react";
 import {
   FaGraduationCap,
   FaUserShield,
@@ -14,37 +15,40 @@ const LandingPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Persist admin login
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) navigate("/admin/dashboard");
+  }, [navigate]);
+
   // Handle Admin Login
-const handleAdminLogin = async () => {
-  setLoading(true);
-  setError("");
-
-  try {
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/api/admin/login`,
-      { username, password }
-    );
-
-    if (res.data?.token) {
-      // ✅ Save token
-      localStorage.setItem("token", res.data.token);
-      navigate("/admin/dashboard");
-    } else {
-      setError("Invalid response from server");
+  const handleAdminLogin = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/admin/login`,
+        { username, password }
+      );
+      if (res.data?.token) {
+        localStorage.setItem("token", res.data.token);
+        navigate("/admin/dashboard");
+      } else {
+        setError("Invalid response from server");
+      }
+    } catch (err) {
+      setError(
+        err.response?.data?.msg || err.message || "Login failed. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setError(
-      err.response?.data?.msg || err.message || "Login failed. Please try again."
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
-
-  // Student Portal Component
+  // ---------------- Student Portal ----------------
   const StudentPortal = () => (
     <>
       <h3 className="flex items-center text-lg font-semibold mb-4">
@@ -53,7 +57,6 @@ const handleAdminLogin = async () => {
       <p className="text-sm text-gray-600 mb-4">
         Enter your roll number and date of birth to access your exams
       </p>
-
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">
@@ -65,7 +68,6 @@ const handleAdminLogin = async () => {
             className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Date of Birth
@@ -75,7 +77,6 @@ const handleAdminLogin = async () => {
             className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-
         <button
           className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
           onClick={() => navigate("/student/home")}
@@ -86,7 +87,7 @@ const handleAdminLogin = async () => {
     </>
   );
 
-  // Admin Portal Component
+  // ---------------- Admin Portal ----------------
   const AdminPortal = () => (
     <>
       <h3 className="flex items-center text-lg font-semibold mb-4">
@@ -111,7 +112,6 @@ const handleAdminLogin = async () => {
             className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Password
@@ -124,12 +124,12 @@ const handleAdminLogin = async () => {
             className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-
         <button
-          className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
+          className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 disabled:opacity-50"
           onClick={handleAdminLogin}
+          disabled={loading}
         >
-          Access Admin Portal
+          {loading ? "Logging in..." : "Access Admin Portal"}
         </button>
       </div>
     </>
@@ -255,6 +255,7 @@ const handleAdminLogin = async () => {
       </footer>
     </div>
   );
-};
+  };
+
 
 export default LandingPage;
