@@ -17,22 +17,28 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   // Handle Admin Login
-  const handleAdminLogin = async () => {
-    try {
-      const res = await axios.post("http://localhost:3000/api/admin/login", {
-        username,
-        password,
-      });
+const handleAdminLogin = async () => {
+  try {
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_URL}/api/admin/login`,
+      { username, password }
+    );
 
-      // Save token for future API requests
+    if (res.data?.token) {
+      // Save token securely
       localStorage.setItem("token", res.data.token);
 
       // Redirect to admin dashboard
       navigate("/admin/dashboard");
-    } catch (err) {
-      setError(err.response?.data?.msg || "Login failed");
+    } else {
+      setError("Invalid response from server");
     }
-  };
+  } catch (err) {
+    const message =
+      err.response?.data?.msg || err.message || "Login failed. Please try again.";
+    setError(message);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
