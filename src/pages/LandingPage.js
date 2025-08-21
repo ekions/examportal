@@ -6,11 +6,33 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 import { FiUsers } from "react-icons/fi";
-import { useNavigate } from "react-router-dom"; // Add for navigation
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const LandingPage = () => {
   const [activeTab, setActiveTab] = useState("student");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // Handle Admin Login
+  const handleAdminLogin = async () => {
+    try {
+      const res = await axios.post("http://localhost:3000/api/admin/login", {
+        username,
+        password,
+      });
+
+      // Save token for future API requests
+      localStorage.setItem("token", res.data.token);
+
+      // Redirect to admin dashboard
+      navigate("/admin/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.msg || "Login failed");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -86,6 +108,7 @@ const LandingPage = () => {
         <div className="mt-8 bg-white p-4 md:p-6 rounded-lg shadow-md w-full max-w-md text-left">
           {activeTab === "student" ? (
             <>
+              {/* Student Portal */}
               <h3 className="flex items-center text-lg font-semibold mb-4">
                 <FaGraduationCap className="text-blue-600 mr-2" /> Student Portal
               </h3>
@@ -127,6 +150,7 @@ const LandingPage = () => {
             </>
           ) : (
             <>
+              {/* Admin Portal */}
               <h3 className="flex items-center text-lg font-semibold mb-4">
                 <FaUserShield className="text-blue-600 mr-2" /> Admin / Teacher
                 Portal
@@ -135,8 +159,12 @@ const LandingPage = () => {
                 Enter your credentials to manage exams and students
               </p>
 
+              {error && (
+                <p className="text-red-500 text-sm mb-2">{error}</p>
+              )}
+
               <div className="space-y-4">
-                {/* ID */}
+                {/* Username */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     User ID
@@ -144,6 +172,8 @@ const LandingPage = () => {
                   <input
                     type="text"
                     placeholder="Enter your ID"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -156,12 +186,15 @@ const LandingPage = () => {
                   <input
                     type="password"
                     placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <button
                   className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
+                  onClick={handleAdminLogin}
                 >
                   Access Admin Portal
                 </button>
