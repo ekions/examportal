@@ -1,21 +1,97 @@
 // src/pages/LandingPage.js
 import React, { useState, useEffect } from "react";
-import {
-  FaGraduationCap,
-  FaUserShield,
-  FaBookOpen,
-  FaCalendarAlt,
-} from "react-icons/fa";
+import { FaGraduationCap, FaUserShield, FaBookOpen, FaCalendarAlt } from "react-icons/fa";
 import { FiUsers } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+// ---------------- StudentPortal Component ----------------
+const StudentPortal = ({ navigate }) => (
+  <>
+    <h3 className="flex items-center text-lg font-semibold mb-4">
+      <FaGraduationCap className="text-blue-600 mr-2" /> Student Portal
+    </h3>
+    <p className="text-sm text-gray-600 mb-4">
+      Enter your roll number and date of birth to access your exams
+    </p>
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Roll Number</label>
+        <input
+          type="text"
+          placeholder="Enter your roll number"
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+        <input
+          type="date"
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <button
+        className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
+        onClick={() => navigate("/student/home")}
+      >
+        Access Exam Portal
+      </button>
+    </div>
+  </>
+);
+
+// ---------------- AdminPortal Component ----------------
+const AdminPortal = ({ username, setUsername, password, setPassword, handleAdminLogin, error, loading }) => (
+  <>
+    <h3 className="flex items-center text-lg font-semibold mb-4">
+      <FaUserShield className="text-blue-600 mr-2" /> Admin / Teacher Portal
+    </h3>
+    <p className="text-sm text-gray-600 mb-4">
+      Enter your credentials to manage exams and students
+    </p>
+
+    {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Username</label>
+        <input
+          type="text"
+          placeholder="Enter your username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Password</label>
+        <input
+          type="password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <button
+        className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 disabled:opacity-50"
+        onClick={handleAdminLogin}
+        disabled={loading}
+      >
+        {loading ? "Logging in..." : "Access Admin Portal"}
+      </button>
+    </div>
+  </>
+);
+
+// ---------------- LandingPage Component ----------------
 const LandingPage = () => {
   const [activeTab, setActiveTab] = useState("student");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   // Persist admin login
@@ -35,7 +111,7 @@ const LandingPage = () => {
       );
       if (res.data?.token) {
         localStorage.setItem("token", res.data.token);
-        localStorage.setItem("username", res.data.username);
+        localStorage.setItem("username", res.data.username); // Save username
         navigate("/admin/dashboard");
       } else {
         setError("Invalid response from server");
@@ -49,93 +125,6 @@ const LandingPage = () => {
     }
   };
 
-  // ---------------- Student Portal ----------------
-  const StudentPortal = () => (
-    <>
-      <h3 className="flex items-center text-lg font-semibold mb-4">
-        <FaGraduationCap className="text-blue-600 mr-2" /> Student Portal
-      </h3>
-      <p className="text-sm text-gray-600 mb-4">
-        Enter your roll number and date of birth to access your exams
-      </p>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Roll Number
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your roll number"
-            className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Date of Birth
-          </label>
-          <input
-            type="date"
-            className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <button
-          className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
-          onClick={() => navigate("/student/home")}
-        >
-          Access Exam Portal
-        </button>
-      </div>
-    </>
-  );
-
-  // ---------------- Admin Portal ----------------
-  const AdminPortal = () => (
-    <>
-      <h3 className="flex items-center text-lg font-semibold mb-4">
-        <FaUserShield className="text-blue-600 mr-2" /> Admin / Teacher Portal
-      </h3>
-      <p className="text-sm text-gray-600 mb-4">
-        Enter your credentials to manage exams and students
-      </p>
-
-      {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Username
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <button
-          className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 disabled:opacity-50"
-          onClick={handleAdminLogin}
-          disabled={loading}
-        >
-          {loading ? "Logging in..." : "Access Admin Portal"}
-        </button>
-      </div>
-    </>
-  );
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navbar */}
@@ -145,9 +134,7 @@ const LandingPage = () => {
             <FaGraduationCap className="text-blue-600 text-2xl" />
             <div>
               <h1 className="text-xl font-bold text-gray-900">ExamPortal</h1>
-              <p className="text-sm text-gray-500 -mt-1">
-                Online Examination System
-              </p>
+              <p className="text-sm text-gray-500 -mt-1">Online Examination System</p>
             </div>
           </div>
 
@@ -174,8 +161,8 @@ const LandingPage = () => {
           Smart Online Examination <span className="text-blue-600">Platform</span>
         </h2>
         <p className="mt-4 text-gray-600 max-w-2xl">
-          Secure, reliable, and user-friendly platform for conducting online
-          examinations. <br className="hidden md:block" />
+          Secure, reliable, and user-friendly platform for conducting online examinations.
+          <br className="hidden md:block" />
           Perfect for educational institutions and certification programs.
         </p>
 
@@ -201,19 +188,27 @@ const LandingPage = () => {
 
         {/* Login Box */}
         <div className="mt-8 bg-white p-4 md:p-6 rounded-lg shadow-md w-full max-w-md text-left">
-          {activeTab === "student" ? <StudentPortal /> : <AdminPortal />}
+          {activeTab === "student" ? (
+            <StudentPortal navigate={navigate} />
+          ) : (
+            <AdminPortal
+              username={username}
+              setUsername={setUsername}
+              password={password}
+              setPassword={setPassword}
+              handleAdminLogin={handleAdminLogin}
+              error={error}
+              loading={loading}
+            />
+          )}
         </div>
       </main>
 
       {/* Features Section */}
       <section className="bg-gray-50 py-12 md:py-16">
         <div className="max-w-6xl mx-auto px-4 md:px-6 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-            Why Choose ExamPortal?
-          </h2>
-          <p className="mt-2 text-gray-600">
-            Built with security, scalability, and user experience in mind
-          </p>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Why Choose ExamPortal?</h2>
+          <p className="mt-2 text-gray-600">Built with security, scalability, and user experience in mind</p>
 
           <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
@@ -251,12 +246,11 @@ const LandingPage = () => {
             <span className="font-medium">ExamPortal</span>
             <span>Secure Online Examinations</span>
           </div>
-          <p className="md:mt-0">© 2024 ExamPortal. All rights reserved.</p>
+          <p className="md:mt-0">© {new Date().getFullYear()} ExamPortal. All rights reserved.</p>
         </div>
       </footer>
     </div>
   );
-  };
-
+};
 
 export default LandingPage;
