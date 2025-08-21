@@ -164,41 +164,41 @@ const LandingPage = () => {
               )}
 
               <div className="space-y-4">
-                {/* Username */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    User ID
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter your ID"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+  {/* Username */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">
+      Username
+    </label>
+    <input
+      type="text"
+      placeholder="Enter your username"
+      value={username}
+      onChange={(e) => setUsername(e.target.value)}
+      className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+    />
+  </div>
 
-                {/* Password */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+  {/* Password */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">
+      Password
+    </label>
+    <input
+      type="password"
+      placeholder="Enter your password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+    />
+  </div>
 
-                <button
-                  className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
-                  onClick={handleAdminLogin}
-                >
-                  Access Admin Portal
-                </button>
-              </div>
+  <button
+    className="w-full py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
+    onClick={handleAdminLogin}
+  >
+    Access Admin Portal
+  </button>
+</div>
             </>
           )}
         </div>
