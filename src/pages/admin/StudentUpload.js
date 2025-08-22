@@ -3,76 +3,113 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const StudentsUpload = () => {
-  const [file, setFile] = useState(null);
+  const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [logs, setLogs] = useState([]);
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-    setMessage("");
+  const parseLine = (line) => {
+    const parts = line.trim().split(/\s+/);
+    if (parts.length < 4) return null;
+
+    const roll_number = parts[0];
+    const div = parts[parts.length - 1];
+    const dob = parts[parts.length - 2];
+    const name = parts.slice(1, parts.length - 2).join(" ");
+
+    if (!roll_number || !name || !dob || !div) return null;
+    return { roll_number, name, dob, div };
   };
 
   const handleUpload = async () => {
-    if (!file) {
-      setMessage("Please select a CSV file first");
+    if (!text.trim()) {
+      setLogs([{ msg: "Input is empty", success: false }]);
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
+    const lines = text.trim().split("\n");
+    const students = [];
+    const newLogs = [];
 
-    try {
-      setLoading(true);
-      setMessage("");
-
-      const token = localStorage.getItem("token"); // assuming admin is logged in
-
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/admin/students/upload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setMessage(res.data.msg || "Students uploaded successfully!");
-      setFile(null);
-    } catch (err) {
-      setMessage(
-        err.response?.data?.msg || err.message || "Upload failed. Try again."
-      );
-    } finally {
-      setLoading(false);
+    for (const line of lines) {
+      const student = parseLine(line);
+      if (!student) {
+        newLogs.push({ msg: `Invalid format: ${line}`, success: false });
+        continue;
+      }
+      students.push(student);
     }
+
+    if (students.length === 0) {
+      setLogs(newLogs);
+      return;
+    }
+
+    setLoading(true);
+
+    for (const student of students) {
+      try {
+        const token = localStorage.getItem("token");
+        await axios.post(
+          `${process.env.REACT_APP_API_URL}/api/admin/students/upload`,
+          { students: [student] },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        newLogs.push({ msg: `Uploaded: ${student.roll_number} - ${student.name}`, success: true });
+      } catch (err) {
+        newLogs.push({
+          msg: `Failed: ${student.roll_number} - ${student.name} (${err.response?.data?.msg || err.message})`,
+          success: false,
+        });
+      }
+    }
+
+    setLogs(newLogs);
+    setLoading(false);
+    setText("");
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4">Upload Students CSV</h2>
+    <div className="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-lg shadow-md">
+      <h2 className="text-xl font-bold mb-4">Paste Students Data</h2>
 
-      <input
-        type="file"
-        accept=".csv"
-        onChange={handleFileChange}
-        className="mb-4"
+      <p className="text-gray-600 text-sm mb-2">
+        Copy-paste student data from Excel in the format:<br />
+        <code>roll_number name dob div</code> (tab or space separated)
+      </p>
+
+      <textarea
+        rows={6}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        className="w-full border border-gray-300 rounded-md p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="101 Baccha 15/01/05 A&#10;102 Bacchi 20/02/05 B"
       />
 
       <button
         onClick={handleUpload}
-        className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
         disabled={loading}
+        className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
       >
-        {loading ? "Uploading..." : "Upload CSV"}
+        {loading ? "Uploading..." : "Upload Students"}
       </button>
 
-      {message && (
-        <p className={`mt-4 text-center ${message.includes("success") ? "text-green-600" : "text-red-600"}`}>
-          {message}
-        </p>
-      )}
+      {/* Logs Box */}
+      <div className="mt-6 max-h-60 overflow-y-auto border border-gray-300 rounded-md p-3 bg-gray-50">
+        {logs.length === 0 ? (
+          <p className="text-gray-500 text-sm">Logs will appear here</p>
+        ) : (
+          logs.map((log, idx) => (
+            <p
+              key={idx}
+              className={`text-sm ${log.success ? "text-green-600" : "text-red-600"}`}
+            >
+              {log.msg}
+            </p>
+          ))
+        )}
+      </div>
     </div>
   );
 };
