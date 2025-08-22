@@ -84,7 +84,7 @@ const StudentsUpload = () => {
         value={text}
         onChange={(e) => setText(e.target.value)}
         className="w-full border border-gray-300 rounded-md p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="101 Baccha 15/01/05 A&#10;102 Bacchi 20/02/05 B"
+        placeholder="Rollno Student Name DOB-YY/mm/dd Division &#10;Rollno Student Name DOB-YY/mm/dd Division"
       />
 
       <button
