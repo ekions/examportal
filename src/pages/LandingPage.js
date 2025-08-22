@@ -5,6 +5,8 @@ import { FiUsers } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+
+
 // ---------------- StudentPortal Component ----------------
 const StudentPortal = ({ navigate }) => (
   <>
@@ -109,6 +111,10 @@ const LandingPage = () => {
         `${process.env.REACT_APP_API_URL}/api/admin/login`,
         { username, password }
       );
+
+      console.log("Login response:", res.data); // <-- Add it here
+
+
       if (res.data?.token) {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("username", res.data.username); // Save username
